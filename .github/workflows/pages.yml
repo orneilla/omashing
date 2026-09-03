@@ -15,18 +15,23 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  # Étape séparée : l'environnement github-pages n'existe qu'une fois Pages
+  # activé, et GitHub le vérifie avant de lancer un job qui le déclare.
+  activer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+  deployer:
+    needs: activer
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Activer Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       # Le site ne sert que l'application : le PDF du manuel reste hors du site.
       - name: Assembler le site
