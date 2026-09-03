@@ -40,7 +40,9 @@ première ouverture, tout est mis en cache : l'app marche sans réseau.
   (nom anglais, nom japonais, kana, hex, numéro).
 - **Mash !** — tire un accord au hasard dans le filtre courant.
 - **Deux vues** par accord : *Planche* (la disposition du livre, croix comprise
-  pour les quatuors) et *Slide* (fond / titre / accents pour une présentation).
+  pour les quatuors) et *Slide*, où l'on choisit soi-même quelle couleur sert de
+  fond et laquelle sert de titre — toutes les combinaisons sont essayables, avec
+  le rapport de contraste affiché pour juger la lisibilité.
 - **Plein écran** — les couleurs seules, bord à bord, pour comparer avec un vrai
   tissu ou montrer l'accord à quelqu'un.
 - **Photo** — photographier un vêtement ou un tissu, toucher sa couleur sur

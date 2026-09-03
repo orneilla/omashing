@@ -184,6 +184,20 @@ main{padding-top:26px;min-width:0}
   padding-top:12px;border-top:1px solid currentColor}
 .slide .bars i{display:block;flex:1;max-width:54px;border-radius:1px}
 
+/* slide : choisir soi-même le fond et le titre */
+.roles{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.role{display:flex;align-items:center;gap:11px}
+.role .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);width:46px;flex:none}
+.dots{display:flex;gap:7px;flex-wrap:wrap}
+.dots button{width:28px;height:28px;border-radius:100px;flex:none;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
+.dots button[aria-pressed="true"]{
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.18),0 0 0 2px var(--card),0 0 0 4px var(--ink)}
+.ratio{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--muted);
+  padding-left:57px}
+.ratio b{font-weight:400;color:var(--ink-2)}
+
 /* photo : trouver l'accord à partir d'une couleur réelle */
 .pick{display:flex;flex-direction:column;gap:16px}
 .drop{border:1px dashed var(--rule);border-radius:var(--r);background:var(--card);
@@ -368,6 +382,9 @@ const lum = c => { const [r,g,b] = c.rgb.map(v => { v /= 255;
   return v <= .03928 ? v/12.92 : Math.pow((v+.055)/1.055, 2.4); });
   return .2126*r + .7152*g + .0722*b; };
 const readable = c => lum(c) > .42 ? '#101114' : '#FBFBF8';
+const contrast = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((m, n) => n - m);
+  return (hi + .05) / (lo + .05); };
+const verdict = r => r >= 7 ? 'excellent' : r >= 4.5 ? 'bon' : r >= 3 ? 'juste pour un grand titre' : 'trop faible';
 /* Lab : comparer des couleurs comme l'œil les compare, pas canal par canal */
 function toLab(rgb){
   const f = v => { v /= 255; return v > .04045 ? Math.pow((v + .055) / 1.055, 2.4) : v / 12.92; };
@@ -602,9 +619,8 @@ document.getElementById('body').addEventListener('click', e => {
   if (c){ state.color = +c.dataset.color; state.view = 'combos'; render(); window.scrollTo({top:0,behavior:'smooth'}); }
 });
 
-function slideHTML(cs, id){
-  const s = [...cs].sort((a, b) => lum(b) - lum(a));
-  const bg = s[0], ink = s[s.length - 1], H = [52, 88, 66, 100];
+function slideHTML(cs, id, bgI, inkI){
+  const bg = cs[bgI], ink = cs[inkI], H = [52, 88, 66, 100];
   return `<div class="slide" style="background:${bg.hex};color:${ink.hex}">
     <span class="kicker">Omashing · accord n° ${pad(id)}</span>
     <h3>${esc(bg.jp)}と${esc(ink.jp)}</h3>
@@ -616,10 +632,16 @@ function slideHTML(cs, id){
 }
 
 /* ---------- sheet ---------- */
-let sheetId = null, sheetView = 'plate';
+let sheetId = null, sheetView = 'plate', slideBg = 0, slideInk = 0;
 const sheet = document.getElementById('sheet'), scrim = document.getElementById('scrim');
 
-function openSheet(id){ sheetId = id; sheetView = 'plate'; drawSheet();
+function openSheet(id){
+  sheetId = id; sheetView = 'plate';
+  // par défaut : la plus claire au fond, la plus foncée pour le titre
+  const cs = K.find(k => k.id === id).colors.map(i => byId[i]);
+  slideBg  = cs.indexOf(cs.reduce((a, b) => lum(a) >= lum(b) ? a : b));
+  slideInk = cs.indexOf(cs.reduce((a, b) => lum(a) <= lum(b) ? a : b));
+  drawSheet();
   scrim.classList.add('on'); sheet.classList.add('on'); sheet.scrollTop = 0;
   document.documentElement.classList.add('locked'); }
 function closeSheet(){ scrim.classList.remove('on'); sheet.classList.remove('on'); sheetId = null;
@@ -632,7 +654,17 @@ function drawSheet(){
   const cs = combo.colors.map(id => byId[id]);
   const stage = sheetView === 'plate'
     ? `<div class="stage">${plateHTML(combo)}</div>`
-    : `<div class="stage">${slideHTML(cs, combo.id)}</div>`;
+    : `<div class="stage">${slideHTML(cs, combo.id, slideBg, slideInk)}</div>`;
+  const dots = (role, active) => cs.map((c, i) =>
+    `<button data-role="${role}" data-i="${i}" aria-pressed="${i === active}"
+       style="background:${c.hex}" title="${esc(c.name)}"
+       aria-label="${esc(c.name)}"></button>`).join('');
+  const ratio = contrast(cs[slideBg], cs[slideInk]);
+  const controls = sheetView !== 'slide' ? '' : `<div class="roles">
+      <div class="role"><span class="lbl">Fond</span><div class="dots">${dots('bg', slideBg)}</div></div>
+      <div class="role"><span class="lbl">Titre</span><div class="dots">${dots('ink', slideInk)}</div></div>
+      <span class="ratio">Lisibilité <b>${ratio.toFixed(1).replace('.', ',')}:1 — ${verdict(ratio)}</b></span>
+    </div>`;
 
   const used = id => K.filter(k => k.colors.includes(id) && k.id !== combo.id).slice(0, 12);
   const related = used(combo.colors[0]);
@@ -662,6 +694,7 @@ function drawSheet(){
     </div>
 
     ${stage}
+    ${controls}
     <div class="bar">${cs.map(c => `<i style="flex:1;background:${c.hex}"></i>`).join('')}</div>
 
     <div class="legend">${cs.map(c => `
@@ -697,6 +730,13 @@ function drawSheet(){
     b.onclick = () => copy(b.dataset.hex, b.dataset.hex + ' copié'));
   sheet.querySelectorAll('[data-open2]').forEach(b =>
     b.onclick = () => openSheet(+b.dataset.open2));
+  sheet.querySelectorAll('[data-role]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.i;
+    // choisir la couleur déjà tenue par l'autre rôle échange les deux
+    if (b.dataset.role === 'bg'){ if (i === slideInk) slideInk = slideBg; slideBg = i; }
+    else { if (i === slideBg) slideBg = slideInk; slideInk = i; }
+    drawSheet();
+  });
   sheet.querySelector('#gofs').onclick = () => openFs(combo.id);
   sheet.querySelector('#gopng').onclick = () => exportPNG(combo);
   sheet.querySelectorAll('[data-cp]').forEach(b => b.onclick = () => {

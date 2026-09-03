@@ -3,7 +3,7 @@
    dans index.html, donc un cache d'abord servirait indéfiniment une vieille
    version tant que le navigateur ne relance pas le service worker.
    Le reste (polices, icônes) : cache d'abord, rafraîchi en arrière-plan. */
-const CACHE = 'omashing-v4';
+const CACHE = 'omashing-v5';
 const SHELL = ['./', './index.html', './manifest.webmanifest',
                './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 
