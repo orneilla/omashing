@@ -43,7 +43,17 @@ première ouverture, tout est mis en cache : l'app marche sans réseau.
   pour les quatuors) et *Slide* (fond / titre / accents pour une présentation).
 - **Plein écran** — les couleurs seules, bord à bord, pour comparer avec un vrai
   tissu ou montrer l'accord à quelqu'un.
+- **Photo** — photographier un vêtement ou un tissu, toucher sa couleur sur
+  l'image : l'app trouve la teinte du manuel la plus proche (comparaison en
+  CIE L\*a\*b\*, pas en RVB) et sort tous les accords qui l'utilisent. Tout se
+  passe sur l'appareil, l'image n'est envoyée nulle part.
+- **Filtres par caractère** — clair, sombre, contrasté, doux, chaud, froid.
+  Calculés depuis les couleurs elles-mêmes (clarté moyenne, écart de clarté,
+  chroma, teinte), avec des seuils réglés sur la distribution des 348 accords ;
+  rien n'est inventé ni ajouté au manuel.
 - **Copier** les hex, un bloc de variables CSS, ou une fiche complète.
+- **Enregistrer l'image** — un PNG 1200×900 de l'accord, disposition du livre,
+  noms japonais et valeurs, à glisser dans une présentation ou à envoyer.
 - **Favoris**, gardés dans le navigateur.
 - **Couleurs** — les 159 teintes classées par famille, avec nom japonais, kana,
   hex et CMJN ; cliquer une couleur montre tous les accords qui l'utilisent.

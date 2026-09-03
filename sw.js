@@ -1,5 +1,5 @@
 /* Omashing — cache hors-ligne. Bump CACHE à chaque déploiement. */
-const CACHE = 'omashing-v2';
+const CACHE = 'omashing-v3';
 const SHELL = ['./', './index.html', './manifest.webmanifest',
                './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 
