@@ -7,24 +7,31 @@ slide, ou n'importe quoi d'autre.
 
 Projet **personnel**, non commercial.
 
+## Ouvrir l'application
+
+`index.html` s'ouvre directement dans un navigateur, sans serveur ni installation :
+tout est dans le fichier, données comprises. C'est suffisant sur un ordinateur.
+
 ## Installer sur l'écran d'accueil
 
-L'app est une **PWA** : une fois en ligne, elle s'installe comme une vraie
-application (icône, plein écran, fonctionne hors-ligne).
+L'app est une **PWA** : servie depuis une vraie adresse web, elle s'installe comme
+une application (icône, plein écran, fonctionne hors-ligne). Il lui faut donc un
+hébergement. Ce dépôt est privé et contient le scan du manuel, qui n'a pas à être
+publié — deux voies, au choix :
 
-1. **Activer GitHub Pages** — *Settings → Pages → Source : Deploy from a branch →
-   `main` / `(root)` → Save*. Sur le plan gratuit, Pages exige un dépôt **public**
-   (*Settings → General → Danger Zone → Change visibility*). Au bout d'une minute
-   le site est à <https://orneilla.github.io/omashing/>.
-2. **iPhone** — ouvrir ce lien dans **Safari** (pas Chrome), bouton Partager →
-   *Sur l'écran d'accueil*. **Android** — Chrome propose *Installer l'application*,
-   ou menu ⋮ → *Ajouter à l'écran d'accueil*.
+- **Un hébergeur gratuit branché sur le dépôt privé.** Cloudflare Pages, Netlify ou
+  Vercel servent un dépôt privé sans le rendre public. Créer le compte, autoriser
+  GitHub, choisir ce dépôt, laisser les réglages de build vides (site statique,
+  racine du dépôt). Rien ne devient public.
+- **GitHub Pages**, qui exige un dépôt **public** sur le plan gratuit. À ne faire
+  qu'avec un dépôt sans le PDF — par exemple un second dépôt ne contenant que
+  `index.html`, `data/`, `icons/`, `manifest.webmanifest` et `sw.js`.
+
+Une fois le site en ligne : **iPhone** — l'ouvrir dans **Safari**, bouton Partager →
+*Sur l'écran d'accueil*. **Android** — Chrome propose *Installer l'application*.
 
 L'icône est le motif en croix des planches à quatre couleurs du manuel. Après la
 première ouverture, tout est mis en cache : l'app marche sans réseau.
-
-Sinon, `index.html` s'ouvre aussi directement dans un navigateur, sans serveur —
-tout est dans le fichier, données comprises.
 
 ## Ce qu'il y a dedans
 
