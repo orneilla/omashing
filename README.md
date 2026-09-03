@@ -13,8 +13,9 @@ L'app est une **PWA** : une fois en ligne, elle s'installe comme une vraie
 application (icône, plein écran, fonctionne hors-ligne).
 
 1. **Activer GitHub Pages** — *Settings → Pages → Source : Deploy from a branch →
-   `main` / `(root)` → Save*. Au bout d'une minute le site est à
-   <https://orneilla.github.io/omashing/>.
+   `main` / `(root)` → Save*. Sur le plan gratuit, Pages exige un dépôt **public**
+   (*Settings → General → Danger Zone → Change visibility*). Au bout d'une minute
+   le site est à <https://orneilla.github.io/omashing/>.
 2. **iPhone** — ouvrir ce lien dans **Safari** (pas Chrome), bouton Partager →
    *Sur l'écran d'accueil*. **Android** — Chrome propose *Installer l'application*,
    ou menu ⋮ → *Ajouter à l'écran d'accueil*.
