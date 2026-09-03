@@ -24,7 +24,6 @@
   --rule:#C7C7C1; --rule-2:#D9D9D4;
   --accent:#17181A;
   --shadow:0 1px 0 rgba(0,0,0,.05), 0 8px 24px -18px rgba(0,0,0,.5);
-  --mannequin:#CFCFC9; --scene:#F4F4F1;
   --sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --mincho:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
@@ -37,7 +36,6 @@
     --rule:#303338; --rule-2:#26282C;
     --accent:#ECECE8;
     --shadow:0 1px 0 rgba(255,255,255,.03), 0 10px 28px -20px #000;
-    --mannequin:#3A3D42; --scene:#232529;
   }
 }
 :root[data-theme="dark"]{
@@ -46,7 +44,6 @@
   --rule:#303338; --rule-2:#26282C;
   --accent:#ECECE8;
   --shadow:0 1px 0 rgba(255,255,255,.03), 0 10px 28px -20px #000;
-  --mannequin:#3A3D42; --scene:#232529;
 }
 *{box-sizing:border-box}
 html.locked,html.locked body{overflow:hidden}
@@ -193,9 +190,6 @@ main{padding-top:26px;min-width:0}
 .mini .plate{aspect-ratio:3/2;border-radius:2px}
 .mini button{border-radius:2px;overflow:hidden;outline:1px solid var(--rule-2);outline-offset:-1px}
 
-/* scenes */
-.scene{background:var(--scene);aspect-ratio:4/3;display:grid;place-items:center;padding:16px}
-.scene svg{height:100%;width:auto;max-width:100%}
 .slide{aspect-ratio:16/9;padding:8.5% 9%;display:flex;flex-direction:column;gap:0;position:relative}
 .slide .kicker{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;opacity:.75}
 .slide h3{font-family:var(--mincho);font-weight:600;font-size:clamp(19px,3.9vw,30px);
@@ -205,6 +199,22 @@ main{padding-top:26px;min-width:0}
   padding-top:12px;border-top:1px solid currentColor}
 .slide .bars i{display:block;flex:1;max-width:54px;border-radius:1px}
 
+/* plein écran : les couleurs seules, pour comparer avec un vrai tissu */
+.fs{position:fixed;inset:0;z-index:100;display:flex;background:var(--sunk);
+  opacity:0;pointer-events:none;transition:opacity .18s ease}
+.fs.on{opacity:1;pointer-events:auto}
+.fs .band{flex:1;display:flex;flex-direction:column;justify-content:flex-end;
+  align-items:center;padding:0 6px calc(22px + env(safe-area-inset-bottom));
+  text-align:center;min-width:0}
+.fs .band b{font-family:var(--sans);font-weight:500;font-size:11px;line-height:1.3;
+  overflow-wrap:anywhere}
+.fs .band span{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;opacity:.72;margin-top:3px}
+.fs .close{position:absolute;top:calc(12px + env(safe-area-inset-top));right:12px;
+  width:38px;height:38px;display:grid;place-items:center;border-radius:100px;
+  background:rgba(0,0,0,.28);color:#fff;backdrop-filter:blur(6px)}
+.fs .tag{position:absolute;top:calc(12px + env(safe-area-inset-top));left:14px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;padding:7px 12px;
+  border-radius:100px;background:rgba(0,0,0,.28);color:#fff;backdrop-filter:blur(6px)}
 .empty{padding:56px 0;text-align:center;color:var(--muted)}
 .empty p{margin:0 0 14px}
 footer{max-width:1320px;margin:0 auto;padding:26px 22px 40px;border-top:1px solid var(--rule);
@@ -236,7 +246,6 @@ footer b{font-weight:500;color:var(--ink-2)}
   .sheet-top h2{font-size:21px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
   .card .names{font-size:11px}
-  .scene{aspect-ratio:3/4;padding:12px}
   .lg{flex-wrap:wrap;row-gap:3px;padding:9px}
   .lg .vals{margin-left:41px;text-align:left;width:100%}
   .lg .vals b{display:inline;margin-right:9px}
@@ -302,6 +311,7 @@ footer b{font-weight:500;color:var(--ink-2)}
 
 <div class="scrim" id="scrim"></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Détail de l'accord"></div>
+<div class="fs" id="fs" role="dialog" aria-modal="true" aria-label="Accord en plein écran"></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -501,46 +511,6 @@ document.getElementById('body').addEventListener('click', e => {
   if (c){ state.color = +c.dataset.color; state.view = 'combos'; render(); window.scrollTo({top:0,behavior:'smooth'}); }
 });
 
-/* ---------- outfit ---------- */
-const ROLES = {
-  2:[['Haut',0],['Bas',1]],
-  3:[['Haut',0],['Bas',1],['Accessoires',2]],
-  4:[['Manteau',0],['Haut',1],['Bas',2],['Accessoires',3]]
-};
-function outfitSVG(cs, shift){
-  const n = cs.length, at = i => cs[(i + shift) % n].hex;
-  const coat = n === 4 ? at(0) : null;
-  const top  = n === 4 ? at(1) : at(0);
-  const bot  = n === 4 ? at(2) : at(1);
-  const acc  = n === 2 ? at(0) : at(n === 4 ? 3 : 2);
-  return `<svg viewBox="0 0 260 478" role="img" aria-label="Silhouette habillée">
-    <ellipse cx="130" cy="464" rx="64" ry="7" fill="rgba(0,0,0,.07)"/>
-    <g fill="var(--mannequin)">
-      <ellipse cx="130" cy="42" rx="20" ry="26"/>
-      <path d="M121 62h18v26h-18z"/>
-      <path d="M96 92c-8 40-14 90-16 134l12 2c2-44 8-92 16-130z"/>
-      <path d="M164 92c8 40 14 90 16 134l-12 2c-2-44-8-92-16-130z"/>
-    </g>
-    <g stroke="rgba(0,0,0,.17)" stroke-width="1.1" stroke-linejoin="round">
-      <path d="M96 214h68l-6 86-6 130h-20l-2-110-2 110h-20l-6-130z" fill="${bot}"/>
-      <path d="M98 92c-10 12-16 60-20 116l16 4c4-52 10-94 16-112z" fill="${top}"/>
-      <path d="M162 92c10 12 16 60 20 116l-16 4c-4-52-10-94-16-112z" fill="${top}"/>
-      <path d="M98 92c8-8 16-12 24-14 4 8 12 8 16 0 8 2 16 6 24 14l5 70-7 66h-60l-7-66z" fill="${top}"/>
-      ${coat ? `
-      <path d="M96 92c-11 12-17 62-21 120l16 4c4-54 10-98 17-116z" fill="${coat}"/>
-      <path d="M164 92c11 12 17 62 21 120l-16 4c-4-54-10-98-17-116z" fill="${coat}"/>
-      <path d="M96 92c8-8 16-12 26-14l6 20-14 28v230H90l-2-190z" fill="${coat}"/>
-      <path d="M164 92c-8-8-16-12-26-14l-6 20 14 28v230h24l2-190z" fill="${coat}"/>` : ''}
-      <path d="M102 424h27v20a4 4 0 0 1-4 4h-19a4 4 0 0 1-4-4z" fill="${acc}"/>
-      <path d="M131 424h27v20a4 4 0 0 1-4 4h-19a4 4 0 0 1-4-4z" fill="${acc}"/>
-      <path d="M164 250c1-24 19-24 20 0" fill="none" stroke="${acc}" stroke-width="4"/>
-      <path d="M158 246h32l4 44h-40z" fill="${acc}"/>
-      <ellipse cx="86" cy="239" rx="8.5" ry="11" fill="var(--mannequin)"/>
-      <ellipse cx="174" cy="239" rx="8.5" ry="11" fill="var(--mannequin)"/>
-      <path d="M116 72c6 10 22 10 28 0l5 15c-9 12-29 12-38 0z" fill="${acc}"/>
-      <path d="M133 90h13l-4 52h-13z" fill="${acc}"/>
-    </g></svg>`;
-}
 function slideHTML(cs, id){
   const s = [...cs].sort((a, b) => lum(b) - lum(a));
   const bg = s[0], ink = s[s.length - 1], H = [52, 88, 66, 100];
@@ -555,10 +525,10 @@ function slideHTML(cs, id){
 }
 
 /* ---------- sheet ---------- */
-let sheetId = null, sheetView = 'plate', shift = 0;
+let sheetId = null, sheetView = 'plate';
 const sheet = document.getElementById('sheet'), scrim = document.getElementById('scrim');
 
-function openSheet(id){ sheetId = id; sheetView = 'plate'; shift = 0; drawSheet();
+function openSheet(id){ sheetId = id; sheetView = 'plate'; drawSheet();
   scrim.classList.add('on'); sheet.classList.add('on'); sheet.scrollTop = 0;
   document.documentElement.classList.add('locked'); }
 function closeSheet(){ scrim.classList.remove('on'); sheet.classList.remove('on'); sheetId = null;
@@ -569,11 +539,9 @@ addEventListener('keydown', e => { if (e.key === 'Escape' && sheetId) closeSheet
 function drawSheet(){
   const combo = K.find(k => k.id === sheetId);
   const cs = combo.colors.map(id => byId[id]);
-  const roles = ROLES[combo.size];
-  let stage;
-  if (sheetView === 'plate') stage = `<div class="stage">${plateHTML(combo)}</div>`;
-  else if (sheetView === 'outfit') stage = `<div class="stage"><div class="scene">${outfitSVG(cs, shift)}</div></div>`;
-  else stage = `<div class="stage">${slideHTML(cs, combo.id)}</div>`;
+  const stage = sheetView === 'plate'
+    ? `<div class="stage">${plateHTML(combo)}</div>`
+    : `<div class="stage">${slideHTML(cs, combo.id)}</div>`;
 
   const used = id => K.filter(k => k.colors.includes(id) && k.id !== combo.id).slice(0, 12);
   const related = used(combo.colors[0]);
@@ -598,19 +566,12 @@ function drawSheet(){
     </div>
 
     <div class="viewtabs" role="tablist">
-      <button role="tab" data-sv="plate"  aria-selected="${sheetView==='plate'}">Planche</button>
-      <button role="tab" data-sv="outfit" aria-selected="${sheetView==='outfit'}">Tenue</button>
-      <button role="tab" data-sv="slide"  aria-selected="${sheetView==='slide'}">Slide</button>
+      <button role="tab" data-sv="plate" aria-selected="${sheetView==='plate'}">Planche</button>
+      <button role="tab" data-sv="slide" aria-selected="${sheetView==='slide'}">Slide</button>
     </div>
 
     ${stage}
     <div class="bar">${cs.map(c => `<i style="flex:1;background:${c.hex}"></i>`).join('')}</div>
-
-    ${sheetView === 'outfit' ? `<div class="tools">
-      <button class="tool" id="rotate">Permuter les rôles</button>
-      <span class="tool" style="box-shadow:none;color:var(--muted)">${
-        roles.map((r, i) => r[0] + ' : ' + esc(cs[(i + shift) % cs.length].name)).join(' · ')}</span>
-    </div>` : ''}
 
     <div class="legend">${cs.map(c => `
       <button class="lg" data-hex="${c.hex}">
@@ -624,6 +585,7 @@ function drawSheet(){
       <button class="tool" data-cp="hex">Copier les hex</button>
       <button class="tool" data-cp="css">Copier en CSS</button>
       <button class="tool" data-cp="txt">Copier la fiche</button>
+      <button class="tool" id="gofs">Plein écran</button>
     </div>
 
     <div class="usedby">
@@ -639,12 +601,11 @@ function drawSheet(){
     favs.has(combo.id) ? favs.delete(combo.id) : favs.add(combo.id); saveFavs(); drawSheet(); render(); };
   sheet.querySelectorAll('[data-sv]').forEach(b =>
     b.onclick = () => { sheetView = b.dataset.sv; drawSheet(); });
-  const rot = sheet.querySelector('#rotate');
-  if (rot) rot.onclick = () => { shift = (shift + 1) % cs.length; drawSheet(); };
   sheet.querySelectorAll('[data-hex]').forEach(b =>
     b.onclick = () => copy(b.dataset.hex, b.dataset.hex + ' copié'));
   sheet.querySelectorAll('[data-open2]').forEach(b =>
     b.onclick = () => openSheet(+b.dataset.open2));
+  sheet.querySelector('#gofs').onclick = () => openFs(combo.id);
   sheet.querySelectorAll('[data-cp]').forEach(b => b.onclick = () => {
     const kind = b.dataset.cp;
     if (kind === 'hex') return copy(cs.map(c => c.hex).join(', '), 'Hex copiés');
@@ -655,6 +616,28 @@ function drawSheet(){
       `\nD'après A Dictionary of Color Combinations, Sanzo Wada.`, 'Fiche copiée');
   });
 }
+
+/* ---------- plein écran ---------- */
+const fs = document.getElementById('fs');
+function openFs(id){
+  const combo = K.find(k => k.id === id);
+  const cs = combo.colors.map(c => byId[c]);
+  fs.innerHTML = cs.map(c => `<div class="band" style="background:${c.hex};color:${readable(c)}">
+      <b>${esc(c.name)}</b><span>${c.hex}</span></div>`).join('') +
+    `<span class="tag">N° ${pad(combo.id)}</span>
+     <button class="close" id="fsclose" aria-label="Fermer">
+       <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+         <path d="M5 5l14 14M19 5L5 19"/></svg></button>`;
+  fs.classList.add('on');
+  document.documentElement.classList.add('locked');
+  fs.querySelector('#fsclose').onclick = e => { e.stopPropagation(); closeFs(); };
+}
+function closeFs(){
+  fs.classList.remove('on');
+  if (!sheetId) document.documentElement.classList.remove('locked');
+}
+fs.addEventListener('click', closeFs);
+addEventListener('keydown', e => { if (e.key === 'Escape' && fs.classList.contains('on')) closeFs(); });
 
 render();
 </script>

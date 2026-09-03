@@ -39,9 +39,10 @@ première ouverture, tout est mis en cache : l'app marche sans réseau.
   (duo / trio / quatuor), par famille chromatique, ou par recherche libre
   (nom anglais, nom japonais, kana, hex, numéro).
 - **Mash !** — tire un accord au hasard dans le filtre courant.
-- **Trois vues** par accord : *Planche* (la disposition du livre, croix comprise
-  pour les quatuors), *Tenue* (les couleurs posées sur une silhouette, avec
-  permutation des rôles), *Slide* (fond / titre / accents pour une présentation).
+- **Deux vues** par accord : *Planche* (la disposition du livre, croix comprise
+  pour les quatuors) et *Slide* (fond / titre / accents pour une présentation).
+- **Plein écran** — les couleurs seules, bord à bord, pour comparer avec un vrai
+  tissu ou montrer l'accord à quelqu'un.
 - **Copier** les hex, un bloc de variables CSS, ou une fiche complète.
 - **Favoris**, gardés dans le navigateur.
 - **Couleurs** — les 159 teintes classées par famille, avec nom japonais, kana,
