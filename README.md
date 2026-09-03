@@ -7,14 +7,25 @@ slide, ou n'importe quoi d'autre.
 
 Projet **personnel**, non commercial.
 
-## Utiliser
+## Installer sur l'écran d'accueil
 
-Ouvrir `index.html` — dans le navigateur, directement, sans serveur ni
-installation. Tout est dans le fichier (données comprises), donc ça marche aussi
-hors-ligne, et ça se met en ligne tel quel sur GitHub Pages
-(*Settings → Pages → Deploy from a branch → `/ (root)`*).
+L'app est une **PWA** : une fois en ligne, elle s'installe comme une vraie
+application (icône, plein écran, fonctionne hors-ligne).
 
-Ce qu'il y a dedans :
+1. **Activer GitHub Pages** — *Settings → Pages → Source : Deploy from a branch →
+   `main` / `(root)` → Save*. Au bout d'une minute le site est à
+   <https://orneilla.github.io/omashing/>.
+2. **iPhone** — ouvrir ce lien dans **Safari** (pas Chrome), bouton Partager →
+   *Sur l'écran d'accueil*. **Android** — Chrome propose *Installer l'application*,
+   ou menu ⋮ → *Ajouter à l'écran d'accueil*.
+
+L'icône est le motif en croix des planches à quatre couleurs du manuel. Après la
+première ouverture, tout est mis en cache : l'app marche sans réseau.
+
+Sinon, `index.html` s'ouvre aussi directement dans un navigateur, sans serveur —
+tout est dans le fichier, données comprises.
+
+## Ce qu'il y a dedans
 
 - **Accords** — les 348 planches du manuel, filtrables par nombre de couleurs
   (duo / trio / quatuor), par famille chromatique, ou par recherche libre
@@ -22,7 +33,7 @@ Ce qu'il y a dedans :
 - **Mash !** — tire un accord au hasard dans le filtre courant.
 - **Trois vues** par accord : *Planche* (la disposition du livre, croix comprise
   pour les quatuors), *Tenue* (les couleurs posées sur une silhouette, avec
-  permutation des rôles), *Slide* (fond / texte / accents pour une présentation).
+  permutation des rôles), *Slide* (fond / titre / accents pour une présentation).
 - **Copier** les hex, un bloc de variables CSS, ou une fiche complète.
 - **Favoris**, gardés dans le navigateur.
 - **Couleurs** — les 159 teintes classées par famille, avec nom japonais, kana,
@@ -33,11 +44,13 @@ Ce qu'il y a dedans :
 | | |
 |---|---|
 | `index.html` | l'application, autonome (généré) |
+| `manifest.webmanifest`, `sw.js`, `icons/` | le nécessaire PWA (installation, hors-ligne) |
 | `app/template.html` | la source de l'application |
 | `data/omashing.json` | les données seules, réutilisables (généré) |
 | `scripts/extract.py` | extraction du PDF vers `data/omashing.json` |
 | `scripts/colors.tsv` | l'index des 159 couleurs relevé sur le manuel |
 | `scripts/build_app.py` | injecte les données dans le gabarit |
+| `scripts/make_icons.py` | génère les icônes depuis la palette |
 
 Régénérer :
 
@@ -45,7 +58,11 @@ Régénérer :
 pip install pymupdf numpy
 python3 scripts/extract.py      # PDF  -> data/omashing.json  (quelques minutes)
 python3 scripts/build_app.py    # JSON -> index.html
+python3 scripts/make_icons.py   # JSON -> icons/
 ```
+
+Après une modification, penser à incrémenter `CACHE` dans `sw.js` pour que les
+appareils déjà installés récupèrent la nouvelle version.
 
 ## Format des données
 

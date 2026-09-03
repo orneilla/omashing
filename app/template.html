@@ -34,6 +34,7 @@
   --mannequin:#3A3D42; --scene:#232529;
 }
 *{box-sizing:border-box}
+html.locked,html.locked body{overflow:hidden}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
      font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
 button,input,select{font:inherit;color:inherit}
@@ -45,7 +46,8 @@ button{cursor:pointer;background:none;border:none;padding:0}
 /* ---------- masthead ---------- */
 header.top{position:sticky;top:0;z-index:40;background:var(--paper);
   border-bottom:1px solid var(--rule);}
-.top-in{max-width:1320px;margin:0 auto;padding:14px 22px;
+.top-in{max-width:1320px;margin:0 auto;
+  padding:calc(14px + env(safe-area-inset-top)) 22px 14px;
   display:flex;align-items:baseline;gap:22px;flex-wrap:wrap}
 .brand{display:flex;align-items:baseline;gap:10px}
 .brand b{font-family:var(--mincho);font-weight:600;font-size:25px;letter-spacing:.01em;line-height:1}
@@ -112,7 +114,7 @@ main{padding-top:26px;min-width:0}
 .card .id{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted)}
 .card .size{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--muted);
   margin-left:auto;text-transform:uppercase}
-.card .fav{color:var(--muted);line-height:0}
+.card .fav{color:var(--muted);line-height:0;padding:4px;margin:-4px}
 .card .fav.on{color:var(--ink)}
 .card .names{font-size:11.5px;color:var(--ink-2);line-height:1.45;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -177,18 +179,16 @@ main{padding-top:26px;min-width:0}
 .mini button{border-radius:2px;overflow:hidden;outline:1px solid var(--rule-2);outline-offset:-1px}
 
 /* scenes */
-.scene{background:var(--scene);aspect-ratio:3/2;display:grid;place-items:center;padding:14px}
+.scene{background:var(--scene);aspect-ratio:4/3;display:grid;place-items:center;padding:16px}
 .scene svg{height:100%;width:auto;max-width:100%}
 .slide{aspect-ratio:16/9;padding:8.5% 9%;display:flex;flex-direction:column;gap:0;position:relative}
 .slide .kicker{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;opacity:.75}
 .slide h3{font-family:var(--mincho);font-weight:600;font-size:clamp(19px,3.9vw,30px);
   margin:6px 0 0;line-height:1.1;letter-spacing:.01em}
-.slide p{font-size:11.5px;margin:8px 0 0;max-width:62%;opacity:.85;line-height:1.5}
-.slide .bars{display:flex;align-items:flex-end;gap:9px;height:62px;margin-top:auto;
-  padding-top:10px;border-top:1px solid currentColor;opacity:.95}
-.slide .bars i{display:block;width:30px;border-radius:1px}
-.slide .tag{position:absolute;right:9%;top:8.5%;font-family:var(--mono);font-size:9px;
-  letter-spacing:.14em;padding:4px 8px;border-radius:100px}
+.slide p{font-size:11.5px;margin:9px 0 0;max-width:34ch;opacity:.82;line-height:1.5}
+.slide .bars{display:flex;align-items:flex-end;gap:8px;height:70px;margin-top:auto;
+  padding-top:12px;border-top:1px solid currentColor}
+.slide .bars i{display:block;flex:1;max-width:54px;border-radius:1px}
 
 .empty{padding:56px 0;text-align:center;color:var(--muted)}
 .empty p{margin:0 0 14px}
@@ -202,11 +202,30 @@ footer b{font-weight:500;color:var(--ink-2)}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
 @media (max-width:860px){
-  .shell{grid-template-columns:1fr;gap:0}
-  aside{position:static;padding-top:18px}
+  .shell{grid-template-columns:1fr;gap:0;padding-left:16px;padding-right:16px}
+  aside{position:static;padding-top:16px}
   .fgroup{margin-bottom:16px}
-  main{padding-top:20px}
+  main{padding-top:18px}
   .sheet{width:100%;border-left:none}
+  .top-in{padding-left:16px;padding-right:16px;gap:14px}
+  footer{padding-left:16px;padding-right:16px;
+         padding-bottom:calc(32px + env(safe-area-inset-bottom))}
+}
+@media (max-width:560px){
+  .brand span{display:none}
+  nav.tabs{margin-left:0;order:3;width:100%}
+  nav.tabs button{flex:1;text-align:center}
+  #mash{margin-left:auto}
+  .sheet-in{padding:calc(18px + env(safe-area-inset-top)) 16px
+            calc(40px + env(safe-area-inset-bottom))}
+  .sheet-top h2{font-size:21px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .card .names{font-size:11px}
+  .scene{aspect-ratio:3/4;padding:12px}
+  .lg{flex-wrap:wrap;row-gap:3px;padding:9px}
+  .lg .vals{margin-left:41px;text-align:left;width:100%}
+  .lg .vals b{display:inline;margin-right:9px}
+  .swatches{grid-template-columns:repeat(auto-fill,minmax(112px,1fr))}
 }
 @media (prefers-reduced-motion:reduce){
   *{transition:none!important;animation:none!important}
@@ -466,7 +485,7 @@ document.getElementById('body').addEventListener('click', e => {
 
 /* ---------- outfit ---------- */
 const ROLES = {
-  2:[['Haut',0],['Bas',1],['Accessoires',0]],
+  2:[['Haut',0],['Bas',1]],
   3:[['Haut',0],['Bas',1],['Accessoires',2]],
   4:[['Manteau',0],['Haut',1],['Bas',2],['Accessoires',3]]
 };
@@ -476,33 +495,44 @@ function outfitSVG(cs, shift){
   const top  = n === 4 ? at(1) : at(0);
   const bot  = n === 4 ? at(2) : at(1);
   const acc  = n === 2 ? at(0) : at(n === 4 ? 3 : 2);
-  return `<svg viewBox="0 0 224 322" role="img" aria-label="Tenue">
-    <g stroke="rgba(0,0,0,.20)" stroke-width="1" stroke-linejoin="round">
-      <circle cx="105" cy="34" r="18" fill="var(--mannequin)"/>
-      <path d="M96 50h18v14H96z" fill="var(--mannequin)"/>
-      <path d="M68 176h74l-7 116h-25l-5-84-5 84H75z" fill="${bot}"/>
-      <path d="M75 60C65 64 57 76 53 94l-8 62 17 4 6-38v58h84v-58l6 38 17-4-8-62c-4-18-12-30-22-34z" fill="${top}"/>
-      ${coat ? `<path d="M75 60C65 64 57 76 53 94l-8 62 17 4 6-38v122h20l4-150z" fill="${coat}"/>
-                <path d="M135 60c10 4 18 16 22 34l8 62-17 4-6-38v122h-20l-4-150z" fill="${coat}"/>` : ''}
-      <path d="M92 60h26v13H92z" fill="${acc}"/>
-      <path d="M100 73h11v40h-11z" fill="${acc}"/>
-      <path d="M71 292h31v11a4 4 0 0 1-4 4H75a4 4 0 0 1-4-4z" fill="${acc}"/>
-      <path d="M110 292h31v11a4 4 0 0 1-4 4h-23a4 4 0 0 1-4-4z" fill="${acc}"/>
-      <path d="M175 154q14-30 28 0" fill="none" stroke="${acc}" stroke-width="3.5"/>
-      <rect x="170" y="154" width="38" height="32" rx="3" fill="${acc}"/>
+  return `<svg viewBox="0 0 260 478" role="img" aria-label="Silhouette habillée">
+    <ellipse cx="130" cy="464" rx="64" ry="7" fill="rgba(0,0,0,.07)"/>
+    <g fill="var(--mannequin)">
+      <ellipse cx="130" cy="42" rx="20" ry="26"/>
+      <path d="M121 62h18v26h-18z"/>
+      <path d="M96 92c-8 40-14 90-16 134l12 2c2-44 8-92 16-130z"/>
+      <path d="M164 92c8 40 14 90 16 134l-12 2c-2-44-8-92-16-130z"/>
+    </g>
+    <g stroke="rgba(0,0,0,.17)" stroke-width="1.1" stroke-linejoin="round">
+      <path d="M96 214h68l-6 86-6 130h-20l-2-110-2 110h-20l-6-130z" fill="${bot}"/>
+      <path d="M98 92c-10 12-16 60-20 116l16 4c4-52 10-94 16-112z" fill="${top}"/>
+      <path d="M162 92c10 12 16 60 20 116l-16 4c-4-52-10-94-16-112z" fill="${top}"/>
+      <path d="M98 92c8-8 16-12 24-14 4 8 12 8 16 0 8 2 16 6 24 14l5 70-7 66h-60l-7-66z" fill="${top}"/>
+      ${coat ? `
+      <path d="M96 92c-11 12-17 62-21 120l16 4c4-54 10-98 17-116z" fill="${coat}"/>
+      <path d="M164 92c11 12 17 62 21 120l-16 4c-4-54-10-98-17-116z" fill="${coat}"/>
+      <path d="M96 92c8-8 16-12 26-14l6 20-14 28v230H90l-2-190z" fill="${coat}"/>
+      <path d="M164 92c-8-8-16-12-26-14l-6 20 14 28v230h24l2-190z" fill="${coat}"/>` : ''}
+      <path d="M102 424h27v20a4 4 0 0 1-4 4h-19a4 4 0 0 1-4-4z" fill="${acc}"/>
+      <path d="M131 424h27v20a4 4 0 0 1-4 4h-19a4 4 0 0 1-4-4z" fill="${acc}"/>
+      <path d="M164 250c1-24 19-24 20 0" fill="none" stroke="${acc}" stroke-width="4"/>
+      <path d="M158 246h32l4 44h-40z" fill="${acc}"/>
+      <ellipse cx="86" cy="239" rx="8.5" ry="11" fill="var(--mannequin)"/>
+      <ellipse cx="174" cy="239" rx="8.5" ry="11" fill="var(--mannequin)"/>
+      <path d="M116 72c6 10 22 10 28 0l5 15c-9 12-29 12-38 0z" fill="${acc}"/>
+      <path d="M133 90h13l-4 52h-13z" fill="${acc}"/>
     </g></svg>`;
 }
 function slideHTML(cs, id){
   const s = [...cs].sort((a, b) => lum(b) - lum(a));
-  const bg = s[0], ink = s[s.length - 1], mid = s.slice(1, -1).length ? s.slice(1, -1) : [s[0]];
-  const bars = (mid.length >= 2 ? mid : [ink, ...mid]).slice(0, 3);
+  const bg = s[0], ink = s[s.length - 1], H = [52, 88, 66, 100];
   return `<div class="slide" style="background:${bg.hex};color:${ink.hex}">
-    <span class="tag" style="background:${ink.hex};color:${bg.hex}">${esc(mid[0].name)}</span>
     <span class="kicker">Omashing · accord n° ${pad(id)}</span>
     <h3>${esc(bg.jp)}と${esc(ink.jp)}</h3>
-    <p>Un fond ${esc(bg.name)}, un texte ${esc(ink.name)}, et ${bars.length} accent${bars.length>1?'s':''} pour les données.</p>
-    <div class="bars">${bars.map((c, i) =>
-      `<i style="background:${c.hex};height:${[62,100,78][i % 3]}%"></i>`).join('')}</div>
+    <p>Fond ${esc(bg.name)} · titre ${esc(ink.name)}</p>
+    <div class="bars">${cs.map((c, i) =>
+      `<i style="background:${c.hex};height:${H[i % 4]}%;box-shadow:inset 0 0 0 1px ${
+        c.hex === bg.hex ? ink.hex : 'transparent'}"></i>`).join('')}</div>
   </div>`;
 }
 
@@ -511,8 +541,10 @@ let sheetId = null, sheetView = 'plate', shift = 0;
 const sheet = document.getElementById('sheet'), scrim = document.getElementById('scrim');
 
 function openSheet(id){ sheetId = id; sheetView = 'plate'; shift = 0; drawSheet();
-  scrim.classList.add('on'); sheet.classList.add('on'); sheet.scrollTop = 0; }
-function closeSheet(){ scrim.classList.remove('on'); sheet.classList.remove('on'); sheetId = null; }
+  scrim.classList.add('on'); sheet.classList.add('on'); sheet.scrollTop = 0;
+  document.documentElement.classList.add('locked'); }
+function closeSheet(){ scrim.classList.remove('on'); sheet.classList.remove('on'); sheetId = null;
+  document.documentElement.classList.remove('locked'); }
 scrim.onclick = closeSheet;
 addEventListener('keydown', e => { if (e.key === 'Escape' && sheetId) closeSheet(); });
 
