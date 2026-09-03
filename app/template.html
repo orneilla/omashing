@@ -1,0 +1,610 @@
+<title>Omashing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Shippori+Mincho:wght@400;600&display=swap">
+<style>
+:root{
+  --paper:#E6E6E3; --card:#FAFAF8; --sunk:#DEDEDA;
+  --ink:#17181A; --ink-2:#4A4D52; --muted:#75787E;
+  --rule:#C7C7C1; --rule-2:#D9D9D4;
+  --accent:#17181A;
+  --shadow:0 1px 0 rgba(0,0,0,.05), 0 8px 24px -18px rgba(0,0,0,.5);
+  --mannequin:#CFCFC9; --scene:#F4F4F1;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --mincho:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --r:3px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#121315; --card:#1B1D20; --sunk:#0D0E10;
+    --ink:#ECECE8; --ink-2:#B9BBBF; --muted:#8A8D93;
+    --rule:#303338; --rule-2:#26282C;
+    --accent:#ECECE8;
+    --shadow:0 1px 0 rgba(255,255,255,.03), 0 10px 28px -20px #000;
+    --mannequin:#3A3D42; --scene:#232529;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121315; --card:#1B1D20; --sunk:#0D0E10;
+  --ink:#ECECE8; --ink-2:#B9BBBF; --muted:#8A8D93;
+  --rule:#303338; --rule-2:#26282C;
+  --accent:#ECECE8;
+  --shadow:0 1px 0 rgba(255,255,255,.03), 0 10px 28px -20px #000;
+  --mannequin:#3A3D42; --scene:#232529;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:none;padding:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.jp{font-family:var(--mincho)}
+
+/* ---------- masthead ---------- */
+header.top{position:sticky;top:0;z-index:40;background:var(--paper);
+  border-bottom:1px solid var(--rule);}
+.top-in{max-width:1320px;margin:0 auto;padding:14px 22px;
+  display:flex;align-items:baseline;gap:22px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand b{font-family:var(--mincho);font-weight:600;font-size:25px;letter-spacing:.01em;line-height:1}
+.brand span{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted)}
+nav.tabs{display:flex;gap:2px;margin-left:auto}
+nav.tabs button{font-size:12.5px;padding:6px 12px;color:var(--muted);border-radius:var(--r);
+  letter-spacing:.02em}
+nav.tabs button[aria-selected="true"]{color:var(--ink);background:var(--card);
+  box-shadow:inset 0 0 0 1px var(--rule-2)}
+.iconbtn{width:30px;height:30px;display:grid;place-items:center;border-radius:var(--r);
+  color:var(--muted);box-shadow:inset 0 0 0 1px var(--rule-2)}
+.iconbtn:hover{color:var(--ink)}
+.mash{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:7px 14px;border-radius:var(--r);background:var(--ink);color:var(--paper)}
+.mash:hover{opacity:.86}
+
+/* ---------- shell ---------- */
+.shell{max-width:1320px;margin:0 auto;padding:0 22px 72px;
+  display:grid;grid-template-columns:212px 1fr;gap:34px;align-items:start}
+aside{position:sticky;top:78px;padding-top:26px}
+.fgroup{margin-bottom:24px}
+.fgroup h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 9px;font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:12px;padding:4px 10px;border-radius:100px;color:var(--ink-2);
+  box-shadow:inset 0 0 0 1px var(--rule);display:inline-flex;align-items:center;gap:7px}
+.chip:hover{box-shadow:inset 0 0 0 1px var(--muted)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);box-shadow:none}
+.chip i{width:9px;height:9px;border-radius:100px;display:block;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
+.chip .n{font-family:var(--mono);font-size:10px;opacity:.55}
+.search{width:100%;padding:7px 10px;border-radius:var(--r);background:var(--card);
+  border:1px solid var(--rule);font-size:13px}
+.search::placeholder{color:var(--muted)}
+.reset{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.reset:hover{color:var(--ink)}
+
+main{padding-top:26px;min-width:0}
+.mainhead{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;
+  padding-bottom:11px;border-bottom:1px solid var(--rule)}
+.mainhead h2{margin:0;font-family:var(--mincho);font-weight:400;font-size:19px;letter-spacing:.01em}
+.count{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em}
+
+/* ---------- plate ---------- */
+.plate{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--sunk);
+  display:flex}
+.plate>.seg{flex:1}
+.plate.p4{display:block}
+.plate.p4 .col{position:absolute;left:29%;width:42%;top:0;bottom:0}
+.plate.p4 .col>div{height:50%}
+.plate.p4 .band{position:absolute;left:0;right:0;top:33%;height:34%;display:flex}
+.plate.p4 .band>div{flex:1}
+
+/* ---------- grid ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:16px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);
+  text-align:left;overflow:hidden;display:flex;flex-direction:column;
+  outline:1px solid var(--rule-2);outline-offset:-1px;transition:transform .16s ease}
+.card:hover{transform:translateY(-2px)}
+.card .meta{padding:9px 11px 11px;display:flex;flex-direction:column;gap:6px}
+.card .row1{display:flex;align-items:center;gap:8px}
+.card .id{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted)}
+.card .size{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--muted);
+  margin-left:auto;text-transform:uppercase}
+.card .fav{color:var(--muted);line-height:0}
+.card .fav.on{color:var(--ink)}
+.card .names{font-size:11.5px;color:var(--ink-2);line-height:1.45;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ---------- colour grid ---------- */
+.famhead{display:flex;align-items:baseline;gap:10px;margin:26px 0 12px;
+  padding-bottom:8px;border-bottom:1px solid var(--rule-2)}
+.famhead h3{margin:0;font-family:var(--mincho);font-size:16px;font-weight:400}
+.famhead span{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.08em}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:12px}
+.sw{text-align:left;border-radius:var(--r);overflow:hidden;background:var(--card);
+  outline:1px solid var(--rule-2);outline-offset:-1px;box-shadow:var(--shadow)}
+.sw .chip-lg{height:64px}
+.sw .t{padding:7px 9px 9px;display:flex;flex-direction:column;gap:1px}
+.sw .t b{font-weight:500;font-size:12px;letter-spacing:-.005em}
+.sw .t .k{font-family:var(--mincho);font-size:11.5px;color:var(--ink-2)}
+.sw .t .h{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.04em}
+
+/* ---------- sheet ---------- */
+.scrim{position:fixed;inset:0;background:rgba(10,11,12,.42);z-index:60;
+  opacity:0;pointer-events:none;transition:opacity .2s ease}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);z-index:70;
+  background:var(--card);border-left:1px solid var(--rule);overflow-y:auto;
+  transform:translateX(102%);transition:transform .26s cubic-bezier(.4,.1,.2,1)}
+.sheet.on{transform:none}
+.sheet-in{padding:22px 26px 44px}
+.sheet-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.sheet-top h2{margin:0;font-family:var(--mincho);font-weight:400;font-size:24px;line-height:1.15}
+.sheet-top .sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-top:5px}
+.sheet-top .acts{margin-left:auto;display:flex;gap:6px}
+.viewtabs{display:flex;gap:2px;margin:18px 0 12px;border-bottom:1px solid var(--rule-2)}
+.viewtabs button{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;
+  padding:8px 11px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.viewtabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.stage{border-radius:var(--r);overflow:hidden;outline:1px solid var(--rule-2);outline-offset:-1px}
+.stage .plate{aspect-ratio:3/2}
+.bar{display:flex;height:12px;border-radius:100px;overflow:hidden;margin-top:14px}
+.legend{margin-top:16px;display:flex;flex-direction:column;gap:2px}
+.lg{display:flex;align-items:center;gap:11px;padding:8px 9px;border-radius:var(--r);
+  width:100%;text-align:left}
+.lg:hover{background:var(--sunk)}
+.lg i{width:30px;height:30px;border-radius:2px;flex:none;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.16)}
+.lg .nm{display:flex;flex-direction:column;min-width:0}
+.lg .nm b{font-weight:500;font-size:13px}
+.lg .nm small{color:var(--muted);font-size:11px}
+.lg .nm small .jp{font-size:12px;color:var(--ink-2)}
+.lg .vals{margin-left:auto;text-align:right;font-family:var(--mono);font-size:10.5px;
+  color:var(--muted);line-height:1.45;flex:none}
+.lg .vals b{display:block;color:var(--ink-2);font-weight:400;font-size:11px}
+.tools{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}
+.tool{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;
+  padding:7px 11px;border-radius:var(--r);box-shadow:inset 0 0 0 1px var(--rule);color:var(--ink-2)}
+.tool:hover{box-shadow:inset 0 0 0 1px var(--muted);color:var(--ink)}
+.usedby{margin-top:26px;padding-top:16px;border-top:1px solid var(--rule-2)}
+.usedby h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--muted);font-weight:500}
+.mini{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:7px}
+.mini .plate{aspect-ratio:3/2;border-radius:2px}
+.mini button{border-radius:2px;overflow:hidden;outline:1px solid var(--rule-2);outline-offset:-1px}
+
+/* scenes */
+.scene{background:var(--scene);aspect-ratio:3/2;display:grid;place-items:center;padding:14px}
+.scene svg{height:100%;width:auto;max-width:100%}
+.slide{aspect-ratio:16/9;padding:8.5% 9%;display:flex;flex-direction:column;gap:0;position:relative}
+.slide .kicker{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;opacity:.75}
+.slide h3{font-family:var(--mincho);font-weight:600;font-size:clamp(19px,3.9vw,30px);
+  margin:6px 0 0;line-height:1.1;letter-spacing:.01em}
+.slide p{font-size:11.5px;margin:8px 0 0;max-width:62%;opacity:.85;line-height:1.5}
+.slide .bars{display:flex;align-items:flex-end;gap:9px;height:62px;margin-top:auto;
+  padding-top:10px;border-top:1px solid currentColor;opacity:.95}
+.slide .bars i{display:block;width:30px;border-radius:1px}
+.slide .tag{position:absolute;right:9%;top:8.5%;font-family:var(--mono);font-size:9px;
+  letter-spacing:.14em;padding:4px 8px;border-radius:100px}
+
+.empty{padding:56px 0;text-align:center;color:var(--muted)}
+.empty p{margin:0 0 14px}
+footer{max-width:1320px;margin:0 auto;padding:26px 22px 40px;border-top:1px solid var(--rule);
+  color:var(--muted);font-size:11.5px;display:flex;gap:18px;flex-wrap:wrap}
+footer b{font-weight:500;color:var(--ink-2)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);z-index:90;
+  background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:11px;
+  letter-spacing:.08em;padding:9px 16px;border-radius:100px;opacity:0;
+  pointer-events:none;transition:opacity .18s ease,transform .18s ease}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr;gap:0}
+  aside{position:static;padding-top:18px}
+  .fgroup{margin-bottom:16px}
+  main{padding-top:20px}
+  .sheet{width:100%;border-left:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><b>Omashing</b><span>348 accords · 159 couleurs</span></div>
+    <nav class="tabs" id="tabs" role="tablist">
+      <button role="tab" data-view="combos" aria-selected="true">Accords</button>
+      <button role="tab" data-view="colors" aria-selected="false">Couleurs</button>
+      <button role="tab" data-view="favs" aria-selected="false">Favoris</button>
+    </nav>
+    <button class="mash" id="mash">Mash&nbsp;!</button>
+    <button class="iconbtn" id="theme" title="Clair / sombre" aria-label="Basculer clair / sombre">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+        <circle cx="12" cy="12" r="4.6"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<div class="shell">
+  <aside>
+    <div class="fgroup">
+      <h3>Recherche</h3>
+      <input class="search" id="q" type="search" placeholder="nom, hex, n°…" autocomplete="off">
+    </div>
+    <div class="fgroup" id="sizeGroup">
+      <h3>Nombre de couleurs</h3>
+      <div class="chips" id="sizes"></div>
+    </div>
+    <div class="fgroup">
+      <h3>Famille</h3>
+      <div class="chips" id="families"></div>
+    </div>
+    <div class="fgroup" id="pickedGroup" hidden>
+      <h3>Couleur choisie</h3>
+      <div class="chips" id="picked"></div>
+    </div>
+    <button class="reset" id="reset">Tout réinitialiser</button>
+  </aside>
+
+  <main>
+    <div class="mainhead"><h2 id="title">Tous les accords</h2><span class="count" id="count"></span></div>
+    <div id="body"></div>
+  </main>
+</div>
+
+<footer>
+  <span><b>Omashing</b> — carnet de mashing colorimétrique d'Orneilla.</span>
+  <span>D'après <b>A Dictionary of Color Combinations</b> — 配色事典, Sanzo Wada (和田三造), Haishoku Soukan 1933-34, Seigensha 2010.</span>
+  <span>Usage personnel.</span>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Détail de l'accord"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = /*OMASHING_DATA*/null;
+const C  = DATA.colors, K = DATA.combinations, GROUPS = DATA.groups;
+const byId = Object.fromEntries(C.map(c => [c.id, c]));
+const GNAME = Object.fromEntries(GROUPS.map(g => [g.key, g]));
+const SIZEWORD = {2:'duo', 3:'trio', 4:'quatuor'};
+
+/* ---------- storage ---------- */
+const store = {
+  get(k, d){ try { const v = localStorage.getItem('omashing.' + k); return v ? JSON.parse(v) : d; }
+             catch (e) { return d; } },
+  set(k, v){ try { localStorage.setItem('omashing.' + k, JSON.stringify(v)); } catch (e) {} }
+};
+let favs = new Set(store.get('favs', []));
+const saveFavs = () => store.set('favs', [...favs]);
+
+const savedTheme = store.get('theme', null);
+if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+document.getElementById('theme').onclick = () => {
+  const cur = document.documentElement.getAttribute('data-theme')
+    || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  store.set('theme', next);
+};
+
+/* ---------- helpers ---------- */
+const pad = n => String(n).padStart(3, '0');
+const lum = c => { const [r,g,b] = c.rgb.map(v => { v /= 255;
+  return v <= .03928 ? v/12.92 : Math.pow((v+.055)/1.055, 2.4); });
+  return .2126*r + .7152*g + .0722*b; };
+const readable = c => lum(c) > .42 ? '#101114' : '#FBFBF8';
+const esc = s => String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+
+let toastT;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('on'), 1700);
+}
+function copy(text, msg){
+  const done = () => toast(msg);
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(text).then(done, () => toast('Copie impossible'));
+  else {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) { toast('Copie impossible'); }
+    ta.remove();
+  }
+}
+
+/* ---------- plate ---------- */
+function plateHTML(combo){
+  const cs = combo.colors.map(id => byId[id]);
+  if (combo.size === 4){
+    return `<div class="plate p4">
+      <div class="col"><div style="background:${cs[0].hex}"></div><div style="background:${cs[3].hex}"></div></div>
+      <div class="band"><div style="background:${cs[1].hex}"></div><div style="background:${cs[2].hex}"></div></div>
+    </div>`;
+  }
+  return `<div class="plate">` +
+    cs.map(c => `<div class="seg" style="background:${c.hex}"></div>`).join('') + `</div>`;
+}
+
+/* ---------- state ---------- */
+const state = { view:'combos', sizes:new Set(), fams:new Set(), color:null, q:'' };
+
+function matches(combo){
+  if (state.sizes.size && !state.sizes.has(combo.size)) return false;
+  const cs = combo.colors.map(id => byId[id]);
+  if (state.fams.size && !cs.some(c => state.fams.has(c.group))) return false;
+  if (state.color && !combo.colors.includes(state.color)) return false;
+  if (state.q){
+    const q = state.q.toLowerCase();
+    const hay = pad(combo.id) + ' ' + cs.map(c => c.name + ' ' + c.jp + ' ' + c.kana + ' ' + c.hex).join(' ');
+    if (!hay.toLowerCase().includes(q)) return false;
+  }
+  return true;
+}
+
+/* ---------- filters ---------- */
+const sizesEl = document.getElementById('sizes');
+sizesEl.innerHTML = [2,3,4].map(n =>
+  `<button class="chip" data-size="${n}" aria-pressed="false">${n} couleurs
+     <span class="n">${K.filter(k => k.size === n).length}</span></button>`).join('');
+const famsEl = document.getElementById('families');
+famsEl.innerHTML = GROUPS.map(g => {
+  const rep = C.filter(c => c.group === g.key);
+  const mid = rep[Math.floor(rep.length / 2)];
+  return `<button class="chip" data-fam="${g.key}" aria-pressed="false">
+    <i style="background:${mid.hex}"></i>${esc(g.fr)}<span class="n">${rep.length}</span></button>`;
+}).join('');
+
+sizesEl.onclick = e => { const b = e.target.closest('[data-size]'); if (!b) return;
+  const n = +b.dataset.size; state.sizes.has(n) ? state.sizes.delete(n) : state.sizes.add(n); render(); };
+famsEl.onclick = e => { const b = e.target.closest('[data-fam]'); if (!b) return;
+  const k = b.dataset.fam; state.fams.has(k) ? state.fams.delete(k) : state.fams.add(k); render(); };
+document.getElementById('q').oninput = e => { state.q = e.target.value.trim(); render(); };
+document.getElementById('reset').onclick = () => {
+  state.sizes.clear(); state.fams.clear(); state.color = null; state.q = '';
+  document.getElementById('q').value = ''; render();
+};
+document.getElementById('tabs').onclick = e => { const b = e.target.closest('[data-view]'); if (!b) return;
+  state.view = b.dataset.view; render(); };
+document.getElementById('mash').onclick = () => {
+  const pool = K.filter(matches); if (!pool.length) return toast('Aucun accord dans ce filtre');
+  openSheet(pool[Math.floor(Math.random() * pool.length)].id);
+};
+
+/* ---------- render ---------- */
+function cardHTML(combo){
+  const cs = combo.colors.map(id => byId[id]);
+  return `<div class="card">
+    <button class="open" data-open="${combo.id}" style="display:block;width:100%">${plateHTML(combo)}</button>
+    <div class="meta">
+      <div class="row1">
+        <span class="id">N° ${pad(combo.id)}</span>
+        <button class="fav ${favs.has(combo.id) ? 'on' : ''}" data-fav="${combo.id}"
+                aria-label="Favori" title="Favori">
+          <svg width="13" height="13" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
+               fill="${favs.has(combo.id) ? 'currentColor' : 'none'}">
+            <path d="M12 20.4 4.6 13a4.7 4.7 0 1 1 7.4-5.7A4.7 4.7 0 1 1 19.4 13z"/></svg>
+        </button>
+        <span class="size">${SIZEWORD[combo.size]}</span>
+      </div>
+      <div class="names">${cs.map(c => esc(c.name)).join(' · ')}</div>
+    </div>
+  </div>`;
+}
+
+function render(){
+  document.querySelectorAll('#tabs [data-view]').forEach(b =>
+    b.setAttribute('aria-selected', String(b.dataset.view === state.view)));
+  sizesEl.querySelectorAll('[data-size]').forEach(b =>
+    b.setAttribute('aria-pressed', String(state.sizes.has(+b.dataset.size))));
+  famsEl.querySelectorAll('[data-fam]').forEach(b =>
+    b.setAttribute('aria-pressed', String(state.fams.has(b.dataset.fam))));
+
+  const pg = document.getElementById('pickedGroup');
+  if (state.color){
+    const c = byId[state.color];
+    pg.hidden = false;
+    document.getElementById('picked').innerHTML =
+      `<button class="chip" aria-pressed="true" id="unpick"><i style="background:${c.hex}"></i>${esc(c.name)} ✕</button>`;
+    document.getElementById('unpick').onclick = () => { state.color = null; render(); };
+  } else pg.hidden = true;
+
+  document.getElementById('sizeGroup').hidden = (state.view === 'colors');
+  const body = document.getElementById('body');
+  const title = document.getElementById('title');
+  const count = document.getElementById('count');
+
+  if (state.view === 'colors'){
+    title.textContent = 'Les 159 couleurs';
+    const q = state.q.toLowerCase();
+    const list = C.filter(c => (!state.fams.size || state.fams.has(c.group)) &&
+      (!q || (c.name + c.jp + c.kana + c.hex).toLowerCase().includes(q)));
+    count.textContent = list.length + ' couleurs';
+    body.innerHTML = GROUPS.map(g => {
+      const sub = list.filter(c => c.group === g.key);
+      if (!sub.length) return '';
+      return `<section><div class="famhead"><h3 class="jp">${g.jp}</h3>
+        <span>${esc(g.fr)} · ${sub.length}</span></div>
+        <div class="swatches">${sub.map(c => `
+          <button class="sw" data-color="${c.id}">
+            <div class="chip-lg" style="background:${c.hex}"></div>
+            <div class="t"><b>${esc(c.name)}</b><span class="k">${c.jp}</span>
+              <span class="h">${c.hex} · N°${c.id}</span></div>
+          </button>`).join('')}</div></section>`;
+    }).join('') || `<div class="empty"><p>Aucune couleur ne correspond.</p></div>`;
+    return;
+  }
+
+  let list = K.filter(matches);
+  if (state.view === 'favs'){
+    list = list.filter(k => favs.has(k.id));
+    title.textContent = 'Mes favoris';
+  } else {
+    title.textContent = state.color ? `Accords avec ${byId[state.color].name}` : 'Tous les accords';
+  }
+  count.textContent = list.length + (list.length > 1 ? ' accords' : ' accord');
+  body.innerHTML = list.length
+    ? `<div class="grid">${list.map(cardHTML).join('')}</div>`
+    : `<div class="empty"><p>${state.view === 'favs'
+        ? 'Pas encore de favori — touchez le cœur sur un accord.'
+        : 'Aucun accord ne correspond à ces filtres.'}</p></div>`;
+}
+
+document.getElementById('body').addEventListener('click', e => {
+  const f = e.target.closest('[data-fav]');
+  if (f){ const id = +f.dataset.fav; favs.has(id) ? favs.delete(id) : favs.add(id); saveFavs(); render(); return; }
+  const o = e.target.closest('[data-open]'); if (o) return openSheet(+o.dataset.open);
+  const c = e.target.closest('[data-color]');
+  if (c){ state.color = +c.dataset.color; state.view = 'combos'; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+});
+
+/* ---------- outfit ---------- */
+const ROLES = {
+  2:[['Haut',0],['Bas',1],['Accessoires',0]],
+  3:[['Haut',0],['Bas',1],['Accessoires',2]],
+  4:[['Manteau',0],['Haut',1],['Bas',2],['Accessoires',3]]
+};
+function outfitSVG(cs, shift){
+  const n = cs.length, at = i => cs[(i + shift) % n].hex;
+  const coat = n === 4 ? at(0) : null;
+  const top  = n === 4 ? at(1) : at(0);
+  const bot  = n === 4 ? at(2) : at(1);
+  const acc  = n === 2 ? at(0) : at(n === 4 ? 3 : 2);
+  return `<svg viewBox="0 0 224 322" role="img" aria-label="Tenue">
+    <g stroke="rgba(0,0,0,.20)" stroke-width="1" stroke-linejoin="round">
+      <circle cx="105" cy="34" r="18" fill="var(--mannequin)"/>
+      <path d="M96 50h18v14H96z" fill="var(--mannequin)"/>
+      <path d="M68 176h74l-7 116h-25l-5-84-5 84H75z" fill="${bot}"/>
+      <path d="M75 60C65 64 57 76 53 94l-8 62 17 4 6-38v58h84v-58l6 38 17-4-8-62c-4-18-12-30-22-34z" fill="${top}"/>
+      ${coat ? `<path d="M75 60C65 64 57 76 53 94l-8 62 17 4 6-38v122h20l4-150z" fill="${coat}"/>
+                <path d="M135 60c10 4 18 16 22 34l8 62-17 4-6-38v122h-20l-4-150z" fill="${coat}"/>` : ''}
+      <path d="M92 60h26v13H92z" fill="${acc}"/>
+      <path d="M100 73h11v40h-11z" fill="${acc}"/>
+      <path d="M71 292h31v11a4 4 0 0 1-4 4H75a4 4 0 0 1-4-4z" fill="${acc}"/>
+      <path d="M110 292h31v11a4 4 0 0 1-4 4h-23a4 4 0 0 1-4-4z" fill="${acc}"/>
+      <path d="M175 154q14-30 28 0" fill="none" stroke="${acc}" stroke-width="3.5"/>
+      <rect x="170" y="154" width="38" height="32" rx="3" fill="${acc}"/>
+    </g></svg>`;
+}
+function slideHTML(cs, id){
+  const s = [...cs].sort((a, b) => lum(b) - lum(a));
+  const bg = s[0], ink = s[s.length - 1], mid = s.slice(1, -1).length ? s.slice(1, -1) : [s[0]];
+  const bars = (mid.length >= 2 ? mid : [ink, ...mid]).slice(0, 3);
+  return `<div class="slide" style="background:${bg.hex};color:${ink.hex}">
+    <span class="tag" style="background:${ink.hex};color:${bg.hex}">${esc(mid[0].name)}</span>
+    <span class="kicker">Omashing · accord n° ${pad(id)}</span>
+    <h3>${esc(bg.jp)}と${esc(ink.jp)}</h3>
+    <p>Un fond ${esc(bg.name)}, un texte ${esc(ink.name)}, et ${bars.length} accent${bars.length>1?'s':''} pour les données.</p>
+    <div class="bars">${bars.map((c, i) =>
+      `<i style="background:${c.hex};height:${[62,100,78][i % 3]}%"></i>`).join('')}</div>
+  </div>`;
+}
+
+/* ---------- sheet ---------- */
+let sheetId = null, sheetView = 'plate', shift = 0;
+const sheet = document.getElementById('sheet'), scrim = document.getElementById('scrim');
+
+function openSheet(id){ sheetId = id; sheetView = 'plate'; shift = 0; drawSheet();
+  scrim.classList.add('on'); sheet.classList.add('on'); sheet.scrollTop = 0; }
+function closeSheet(){ scrim.classList.remove('on'); sheet.classList.remove('on'); sheetId = null; }
+scrim.onclick = closeSheet;
+addEventListener('keydown', e => { if (e.key === 'Escape' && sheetId) closeSheet(); });
+
+function drawSheet(){
+  const combo = K.find(k => k.id === sheetId);
+  const cs = combo.colors.map(id => byId[id]);
+  const roles = ROLES[combo.size];
+  let stage;
+  if (sheetView === 'plate') stage = `<div class="stage">${plateHTML(combo)}</div>`;
+  else if (sheetView === 'outfit') stage = `<div class="stage"><div class="scene">${outfitSVG(cs, shift)}</div></div>`;
+  else stage = `<div class="stage">${slideHTML(cs, combo.id)}</div>`;
+
+  const used = id => K.filter(k => k.colors.includes(id) && k.id !== combo.id).slice(0, 12);
+  const related = used(combo.colors[0]);
+
+  sheet.innerHTML = `<div class="sheet-in">
+    <div class="sheet-top">
+      <div>
+        <h2>Accord N° ${pad(combo.id)}</h2>
+        <div class="sub">${SIZEWORD[combo.size]} · ${combo.size} couleurs</div>
+      </div>
+      <div class="acts">
+        <button class="iconbtn" id="sfav" title="Favori" aria-label="Favori">
+          <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
+               fill="${favs.has(combo.id) ? 'currentColor' : 'none'}">
+            <path d="M12 20.4 4.6 13a4.7 4.7 0 1 1 7.4-5.7A4.7 4.7 0 1 1 19.4 13z"/></svg>
+        </button>
+        <button class="iconbtn" id="sclose" title="Fermer" aria-label="Fermer">
+          <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">
+            <path d="M5 5l14 14M19 5L5 19"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="viewtabs" role="tablist">
+      <button role="tab" data-sv="plate"  aria-selected="${sheetView==='plate'}">Planche</button>
+      <button role="tab" data-sv="outfit" aria-selected="${sheetView==='outfit'}">Tenue</button>
+      <button role="tab" data-sv="slide"  aria-selected="${sheetView==='slide'}">Slide</button>
+    </div>
+
+    ${stage}
+    <div class="bar">${cs.map(c => `<i style="flex:1;background:${c.hex}"></i>`).join('')}</div>
+
+    ${sheetView === 'outfit' ? `<div class="tools">
+      <button class="tool" id="rotate">Permuter les rôles</button>
+      <span class="tool" style="box-shadow:none;color:var(--muted)">${
+        roles.map((r, i) => r[0] + ' : ' + esc(cs[(i + shift) % cs.length].name)).join(' · ')}</span>
+    </div>` : ''}
+
+    <div class="legend">${cs.map(c => `
+      <button class="lg" data-hex="${c.hex}">
+        <i style="background:${c.hex}"></i>
+        <span class="nm"><b>${esc(c.name)}</b>
+          <small><span class="jp">${c.jp}</span> ${esc(c.kana)} · N°${c.id}</small></span>
+        <span class="vals"><b>${c.hex}</b>C${c.cmyk[0]} M${c.cmyk[1]} J${c.cmyk[2]} N${c.cmyk[3]}</span>
+      </button>`).join('')}</div>
+
+    <div class="tools">
+      <button class="tool" data-cp="hex">Copier les hex</button>
+      <button class="tool" data-cp="css">Copier en CSS</button>
+      <button class="tool" data-cp="txt">Copier la fiche</button>
+    </div>
+
+    <div class="usedby">
+      <h4>Autres accords avec ${esc(cs[0].name)}</h4>
+      <div class="mini">${related.map(k =>
+        `<button data-open2="${k.id}" title="N° ${pad(k.id)}">${plateHTML(k)}</button>`).join('')
+        || '<span style="color:var(--muted);font-size:12px">Cet accord est le seul.</span>'}</div>
+    </div>
+  </div>`;
+
+  sheet.querySelector('#sclose').onclick = closeSheet;
+  sheet.querySelector('#sfav').onclick = () => {
+    favs.has(combo.id) ? favs.delete(combo.id) : favs.add(combo.id); saveFavs(); drawSheet(); render(); };
+  sheet.querySelectorAll('[data-sv]').forEach(b =>
+    b.onclick = () => { sheetView = b.dataset.sv; drawSheet(); });
+  const rot = sheet.querySelector('#rotate');
+  if (rot) rot.onclick = () => { shift = (shift + 1) % cs.length; drawSheet(); };
+  sheet.querySelectorAll('[data-hex]').forEach(b =>
+    b.onclick = () => copy(b.dataset.hex, b.dataset.hex + ' copié'));
+  sheet.querySelectorAll('[data-open2]').forEach(b =>
+    b.onclick = () => openSheet(+b.dataset.open2));
+  sheet.querySelectorAll('[data-cp]').forEach(b => b.onclick = () => {
+    const kind = b.dataset.cp;
+    if (kind === 'hex') return copy(cs.map(c => c.hex).join(', '), 'Hex copiés');
+    if (kind === 'css') return copy(':root{\n' + cs.map((c, i) =>
+      `  --omashing-${i + 1}: ${c.hex}; /* ${c.name} */`).join('\n') + '\n}', 'CSS copié');
+    copy(`Omashing — accord N° ${pad(combo.id)} (${combo.size} couleurs)\n` +
+      cs.map(c => `${c.hex}  ${c.name} — ${c.jp} (${c.kana})  C${c.cmyk[0]} M${c.cmyk[1]} J${c.cmyk[2]} N${c.cmyk[3]}`).join('\n') +
+      `\nD'après A Dictionary of Color Combinations, Sanzo Wada.`, 'Fiche copiée');
+  });
+}
+
+render();
+</script>
