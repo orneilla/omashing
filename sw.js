@@ -1,11 +1,17 @@
-/* Omashing — cache hors-ligne. Bump CACHE à chaque déploiement. */
-const CACHE = 'omashing-v3';
+/* Omashing — cache hors-ligne.
+   La page : réseau d'abord, cache en secours. Tout le contenu de l'app tient
+   dans index.html, donc un cache d'abord servirait indéfiniment une vieille
+   version tant que le navigateur ne relance pas le service worker.
+   Le reste (polices, icônes) : cache d'abord, rafraîchi en arrière-plan. */
+const CACHE = 'omashing-v4';
 const SHELL = ['./', './index.html', './manifest.webmanifest',
                './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE)
-    .then(c => Promise.allSettled(SHELL.map(u => c.add(u))))
+    // cache: 'reload' court-circuite le cache HTTP du navigateur, qui pourrait
+    // resservir l'ancien index.html dans le nouveau cache.
+    .then(c => Promise.allSettled(SHELL.map(u => c.add(new Request(u, { cache: 'reload' })))))
     .then(() => self.skipWaiting()));
 });
 
@@ -18,6 +24,18 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
+
+  if (req.mode === 'navigate') {
+    e.respondWith(
+      fetch(req).then(res => {
+        const copy = res.clone();
+        e.waitUntil(caches.open(CACHE).then(c => c.put('./index.html', copy)));
+        return res;
+      }).catch(() => caches.match('./index.html').then(hit => hit || caches.match('./')))
+    );
+    return;
+  }
+
   e.respondWith(caches.match(req).then(hit => {
     if (hit) {
       e.waitUntil(fetch(req).then(res => {
@@ -31,6 +49,6 @@ self.addEventListener('fetch', e => {
         e.waitUntil(caches.open(CACHE).then(c => c.put(req, copy)));
       }
       return res;
-    }).catch(() => req.mode === 'navigate' ? caches.match('./index.html') : Response.error());
+    }).catch(() => Response.error());
   }));
 });
