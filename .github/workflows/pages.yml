@@ -1,5 +1,9 @@
 name: Déployer sur GitHub Pages
 
+# Prérequis, une seule fois : Settings → Pages → Source : GitHub Actions.
+# GitHub interdit à un workflow d'activer Pages lui-même sur un dépôt qui ne
+# l'a jamais eu (Create Pages site → Resource not accessible by integration).
+
 on:
   push:
     branches: [main]
@@ -15,17 +19,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Étape séparée : l'environnement github-pages n'existe qu'une fois Pages
-  # activé, et GitHub le vérifie avant de lancer un job qui le déclare.
-  activer:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
-
   deployer:
-    needs: activer
     runs-on: ubuntu-latest
     environment:
       name: github-pages
